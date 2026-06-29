@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"?
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="'width-device-width, initial-scale=1.0">
-    <title>Morse Code</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Code Challenge</title>
     <style>
-        body{
+        body {
             margin: 0;
-            background-color: #ffffff;
-            background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.3) 1px, transparent 1px);
+            background-color: #ffffff; /* Pure white page background */
+            position: relative;
             color: #000000;
-            font-family: 'Courier New', Courier, monosapce;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -19,38 +19,37 @@
             overflow: hidden;
         }
 
-        body::before{
-            content: ".-- .. .-. . .-.. . ... ...   ... .. --. -. .- .-..";
+        #bgCanvas {
             position: absolute;
-            font-size: 11rem;
-            font-weight: 900;
-            color: rbga(0,0,0,0.015);
-            white-space: nowrap;
-            top: 5%;
-            left: -10%;
-            transform: rotate(-12deg);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
             pointer-events: none;
-            user-select: none;
         }
-        #gameContainer{
+
+        #gameContainer {
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
             border: 3px solid #000000;
             border-radius: 8px;
-        }
-        canvas{
-            display: block;
+            z-index: 2;
             background: #ffffff;
         }
-        .instructions{
+        canvas {
+            display: block;
+        }
+        .instructions {
             margin-top: 15px;
             text-align: center;
             max-width: 600px;
             font-size: 14px;
             line-height: 1.5;
             color: #4a4a4a;
+            z-index: 2;
         }
-        span.key{
+        span.key {
             background: #1a1a1a;
             color: #ffffff;
             padding: 2px 6px;
@@ -60,15 +59,52 @@
     </style>
 </head>
 <body>
+    <canvas id="bgCanvas"></canvas>
+
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
     </div>
     <div class="instructions">
         <p><strong>[ONEKEY CHALLENGE]</strong> Use only the <span class="key">Spacebar</span></p>
-        <p>Quick Tap = Dot (.) | Hold (>200ms) = Dash (-) | Release & Wait (400ms) = Next Letter</p>
+        <p>Quick Tap = Dot (.) | Hold (&gt;200ms) = Dash (-) | Release & Wait (400ms) = Next Letter</p>
     </div>
 
     <script>
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        resizeBg();
+        window.addEventListener('resize', resizeBg);
+
+        const matrixChars = [".", "-", "•", "−", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+        const fontSize = 16;
+        const columns = Math.floor(bgCanvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            // FIXED: Draws a semi-transparent white box over previous text positions to create trailing paths
+            bgCtx.fillStyle = "rgba(255, 255, 255, 0.14)";
+            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // FIXED: Dark charcoal gray text with clear opacity so it stands out sharply against the white background
+            bgCtx.fillStyle = "rgba(0, 0, 0, 0.12)"; 
+            bgCtx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                bgCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > bgCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -81,7 +117,7 @@
             'Z': '--..'
         };
 
-        const WORDS = ["RUN", "SOS", "KEY", "HACK", "WIRE", "CODE", "DASH", "PORT", "GRID", "BYTE", "ONEKEY", "LOL", "HI", "ERROR", "JAVA", "PYTHON", " VSCODE", "SUMMER"];
+        const WORDS = ["RUN", "SOS", "KEY", "HACK", "WIRE", "CODE", "DASH", "PORT", "GRID", "BYTE", "ONEKEY", "LOL", "HI", "ERROR", "JAVA", "PYTHON", "VSCODE", "SUMMER"];
 
         let score = 0;
         let gameOver = false;
@@ -100,7 +136,7 @@
             while (nextWord === currentWord) {
                 nextWord = WORDS[Math.floor(Math.random() * WORDS.length)];
             }
-            currentWord = nextWord;
+            currentWord = nextWord.trim();
             currentBuffer = "";
         }
 
@@ -167,6 +203,8 @@
         }
 
         function loop() {
+            drawMatrix();
+
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -200,7 +238,7 @@
 
             ctx.textAlign = "left";
             ctx.fillStyle = "#1a1a1a";
-            ctx.font = "20px 'Courier New'";
+            ctx.font = "bold 20px 'Courier New'";
             ctx.fillText(`SCORE: ${score}`, 20, 40);
 
             ctx.fillStyle = "#f4f6f9";
