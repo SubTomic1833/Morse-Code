@@ -8,6 +8,7 @@
         body{
             margin: 0;
             background-color: #ffffff;
+            background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.3) 1px, transparent 1px);
             color: #000000;
             font-family: 'Courier New', Courier, monosapce;
             display: flex;
@@ -16,6 +17,20 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+        }
+
+        body::before{
+            content: ".-- .. .-. . .-.. . ... ...   ... .. --. -. .- .-..";
+            position: absolute;
+            font-size: 11rem;
+            font-weight: 900;
+            color: rbga(0,0,0,0.015);
+            white-space: nowrap;
+            top: 5%;
+            left: -10%;
+            transform: rotate(-12deg);
+            pointer-events: none;
+            user-select: none;
         }
         #gameContainer{
             position: relative;
