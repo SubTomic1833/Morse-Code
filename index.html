@@ -36,8 +36,8 @@
             color: #4a4a4a;
         }
         span.key{
-            background: #00ffcc;
-            color: #0a0e17;
+            background: #1a1a1a;
+            color: #ffffff;
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: bold;
@@ -152,7 +152,7 @@
         }
 
         function loop() {
-            ctx.fillStyle = "#0d1527";
+            ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (!gameOver) {
@@ -167,16 +167,16 @@
                 let startX = (canvas.width - totalWidth) / 2;
 
                 ctx.textAlign = "left";
-                ctx.fillStyle = "#00ffcc";
+                ctx.fillStyle = "#707070";
                 ctx.fillText(typedText, startX, canvas.height / 2 - 20);
 
-                ctx.fillStyle = "#ffffff";
+                ctx.fillStyle = "#1a1a1a";
                 let offset = ctx.measureText(typedText).width;
                 ctx.fillText(remainingText, startX + offset, canvas.height / 2 - 20);
 
                 ctx.textAlign = "center";
                 ctx.font = "bold 28px 'Courier New'";
-                ctx.fillStyle = "#8ab4f8";
+                ctx.fillStyle = "#555555";
                 
                 let nextChar = currentWord[matchedChars] || "";
                 let guideText = nextChar ? `Target Letter [ ${nextChar} ] : ${MORSE_DICT[nextChar]}` : "COMPLETE!";
@@ -184,27 +184,27 @@
             }
 
             ctx.textAlign = "left";
-            ctx.fillStyle = "#00ffcc";
+            ctx.fillStyle = "#1a1a1a";
             ctx.font = "20px 'Courier New'";
             ctx.fillText(`SCORE: ${score}`, 20, 40);
 
-            ctx.fillStyle = "#0a0e17";
+            ctx.fillStyle = "#f4f6f9";
             ctx.fillRect(0, canvas.height - 78, canvas.width, 78);
-            ctx.strokeStyle = "#00ffcc";
+            ctx.strokeStyle = "#1a1a1a";
             ctx.strokeRect(0, canvas.height - 78, canvas.width, 78);
 
             ctx.font = "24px 'Courier New'";
-            ctx.fillStyle = "#ffffff";
+            ctx.fillStyle = "#555555";
             ctx.fillText(`Current Buffer: `, 20, canvas.height - 30);
-            ctx.fillStyle = "#00ffcc";
+            ctx.fillStyle = "#1a1a1a";
             ctx.fillText(currentBuffer || "...", 240, canvas.height - 30);
 
-            ctx.fillStyle = "#8ab4f8";
+            ctx.fillStyle = "#1a1a1a";
             ctx.fillText(`Signal: ${currentSignal}`, 520, canvas.height - 30);
 
             if (isPressed) {
                 let holdDuration = Date.now() - keyDownTime;
-                ctx.fillStyle = holdDuration >= DASH_THRESHOLD ? "#ff0055" : "#00ffcc";
+                ctx.fillStyle = holdDuration >= DASH_THRESHOLD ? "#ff0055" : "#1a1a1a";
                 ctx.fillRect(520, canvas.height - 18, Math.min(holdDuration / 2, 120), 6);
             }
 
