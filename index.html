@@ -149,5 +149,123 @@
                 }
             }
         }
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        canvas.addEventListener('mousedown', handleKeyDown)
+        canvas.addEventListener('mouseup', handleKeyUp);
+        canvas.addEventListener('touchstart', handleKeyDown);
+        canvas.addEventListener('touchend', handleKeyUp);
+
+        function checkInputBuffer(){
+            if(!isPressed && currentSignal.length > 0 && (Date.now() - keyUpTime > LETTER_GAP)){
+                let foundLetter = Object.keys(MORSE_DICT).find(key => MORSE_DICT[key] === currentSignal);
+
+                if(foundLetter){
+                    currentBuffer += foundLetter;
+
+                    let wordCleared = false;
+                    for (let i = activeWords.length - 1; i >= 0; i--){
+                        if(activeWords[i].text === currentBuffer){
+                            activeWords.splice(i, 1);
+                            score += 10;
+                            wordCleared = true;
+                        }
+                    }
+
+                    let matchesAnyValidPath = activeWords.some(w => w.text.startsWith(currentBuffer));
+                    if (!matchesAnyValidPath && !wordCleared){
+                        currentBuffer = "";
+                    }
+                }
+                currentSignal = "";
+            }
+        }
+
+        function resetGame(){
+            score = 0;
+            lives = 3;
+            gameOver = false;
+            activeWords = [new IncomingWord()];
+            currentSignal = "";
+            currentBuffer = "";
+            gameSpeed = 1.0;
+        }
+        
+        function loop(){
+            ctx.fillStyle = "#0d1527";
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+
+            if(!gameOver){
+                spawnTimer++;
+                if(spawnTimer >= spawnRate){
+                    activeWords.push(new IncomingWord());
+                    spawnTmer = 0;
+                    gameSpeed += 0.02;
+                }
+
+                for (let i = activeWords.length - 1; i >= 0; i--){
+                    let shouldRemove = activeWords[i].update();
+                    if (shouldRemove){
+                        activeWords.splice(i, 1);
+                        currentBuffer = "";
+                    }else{
+                        activeWords[i].draw();
+                    }
+                }
+
+                checkInputBuffer();
+            }
+
+            ctx.fillStyle = "#00ffcc";
+            ctx.font = "20px 'Courier New'";
+            ctx.fillText(`SCORE: ${score}`, 20, 40);
+            ctx.fillText(`LIVES: ${"❤️".repeat(lives)}`, canvas.width - 150, 40);
+
+            ctx.strokeStyle = "rgba(255,0,85,0.4)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 80);
+            ctx.lineTo(canvas.width, canvas.height - 80);
+            ctx.stroke();
+
+            ctx.fillStyle = "#0a0e17";
+            ctx.fillRect(0, canvas.height - 78, canvas.width, 78);
+            ctx.strokeStyle = "#00ffcc";
+            ctx.strokeRect(0, canvas.height - 78, canvas.width, 78);
+
+            ctx.font = "24px 'Courier New'";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`Current Buffer: `, 20, canvas.height - 30);
+            ctx.FillStyle = "#00ffcc";
+            ctx.fillText(crrentBuffer || ". . .", 240, canvas.height - 30);
+
+            ctx.fillStyle = "#8ab4f8";
+            ctx.fillText(`Signal: ${currentSignal}`, 520, canvas.height - 30);
+
+            if (isPressed){
+                let holdDuration = Date.now() - keyDownTime;
+                ctx.fillStyle = holdDuration >= DASH_THRESHOLD ? "#ff0055" : "#00ffcc";
+                ctx.fillRect(520, canvas.height - 18, Math.min(holdDuration / 2, 120), 6);
+            }
+
+            if(gameOver){
+                ctx.fillStyle = "rgba(10, 14, 23, 0.85)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#ff0055";
+                ctx.font = "bold 40px 'Courier New'";
+                ctx.textAlign = "center";
+                ctx.fillText("SIGNAL TERMINATED", canvas.width / 2, canvas.height / 2 - 20);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "20px 'Courier New'";
+                ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+                ctx.fillText("Tap/Press Spacebar to Restart", canvas.width / 2, canvas.height / 2 + 60);
+                ctx.textAlign = "left";
+            }
+            requestAnimationFrame(loop;)
+        }
+
+        resetGame();
+        loop();
     </script>
 </body>
+</html>
