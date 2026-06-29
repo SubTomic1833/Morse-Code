@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"?
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="'width-device-width, initial-scale=1.0">
+    <title>Morse Code</title>
+    <style>
+        body{
+            margin: 0;
+            background-color: #0a0e17;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monosapce;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #gameContainer{
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,255,204,0.3);
+            border: 2px solid #00ffcc;
+            border-radius: 8px;
+        }
+        canvas{
+            display: block;
+            background: #0d1527;
+        }
+        .instructions{
+            margin-top: 15px;
+            text-align: center;
+            max-width: 600px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #8ab4f8;
+        }
+        span.key{
+            background: #00ffcc;
+            color: #0a0e17;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+    <div class="instructions">
+        <p><strong>[ONEKEY CHALLENGE]</strong> Use only the <span class="key">Spacebar</span></p>
+        <p>Quick Tap = Dot (.) | Hold (>200ms) = Dash (-) | Release & Wait (400ms) = Next Letter</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const MORSE_DICT = {
+            'A': '.-',    'B': '-...',  'C': '-.-.',  'D': '-..',   'E': '.',
+            'F': '..-.',  'G': '--.',   'H': '....',  'I': '..',    'J': '.---',
+            'K': '-.-',   'L': '.-..',  'M': '--',    'N': '-.',    'O': '---',
+            'P': '.--.',  'Q': '--.-',  'R': '.-.',   'S': '...',   'T': '-',
+            'U': '..-',   'V': '...-',  'W': '.--',   'X': '-..-',  'Y': '-.--',
+            'Z': '--..'
+        };
+
+        const WORDS = ["RUN", "SOS", "KEY", "HACK", "WIRE", "CODE", "DASH", "PORT", "GRID", "BYTE"];
+
+        let score = 0;
+        let lives = 3;
+        let gameOver = false;
+        let activeWords = [];
+        let spawnTimer = 0;
+        let spawnRate = 120;
+        let gameSpeed = 1.0;
+
+        let keyDownTime = 0;
+        let keyUpTime = 0;
+        let isPressed = false;
+        let currentSignal = "";
+        let currentBudder = "";
+        const DASH_THRESHOLD = 200;
+        const LETTER_GAP = 450;
+
+        class IncomingWord{
+            constructor(){
+                this.text = WORDS[Math.floor(Math.random() * WORDS.length)];
+                this.x = Math.random() * (canvas.width - 200) + 100;
+                this.y = -20;
+                this.speed = (Math.random() * 0.4 + 0.4) * gameSpeed;
+            }
+
+            update(){
+                this.y += this.speed;
+                if (this.y > canvas.height - 80){
+                    lives--;
+                    if(lives<=0) gameOver = true;
+                    return true;
+                }
+                return false;
+            }
+            draw(){
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 24px 'Courier New'";
+                
+                let matchedChars = 0;
+                if(currentBuffer.length > 0 && this.text.startsWith(currentBuffer)){
+                    matchedChars = currentBuffer.length;
+                }
+
+                ctx.fillStyle = "#00ffcc";
+                ctx.fillText(this.text.substring(0, matchedChars), this.x, this.y);
+
+                ctx.fillStyle = "#ffffff";
+                let offset = ctx.measureText(this.text.substring(0, matchedChars)).width;
+                ctx.fillText(this.text.substring(matchedChars), this.x + offset, this.y);
+
+                ctx.font = "12px 'Courer New'";
+                ctx.fillStyle = "#8ab4f8";
+                let nextChar = this.text[matchedChars] || "";
+                let guide = nextchar ? `${nextChar}: ${MORSE_DICT[nextChar]}` : "✓";
+                ctx.fillText(guide, this.x, this.y + 18);
+            }
+        }
+
+        function handleKeyDown(e){
+            if (e.repeat) return;
+            if (e.code === 'Space' || e.type === 'touchstart' || e.type === 'mousedown')
+        }
+    </script>
+</body>
