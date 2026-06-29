@@ -7,7 +7,10 @@
     <style>
         body {
             margin: 0;
-            background-color: #ffffff; /* Pure white page background */
+            background-color: #ffffff;
+            /* Creates a clean, repeating static watermark pattern of "ONEKEY" in Morse code */
+            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
+            background-size: 24px 24px;
             position: relative;
             color: #000000;
             font-family: 'Courier New', Courier, monospace;
@@ -19,14 +22,23 @@
             overflow: hidden;
         }
 
-        #bgCanvas {
+        /* Static background grid layer for the Morse text */
+        #staticBg {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: -5%;
+            left: -5%;
+            width: 110vw;
+            height: 110vh;
             z-index: 1;
+            opacity: 0.04; /* Keeps it super subtle so it doesn't distract from the game */
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 2;
+            letter-spacing: 4px;
+            word-wrap: break-word;
+            user-select: none;
             pointer-events: none;
+            overflow: hidden;
         }
 
         #gameContainer {
@@ -59,7 +71,7 @@
     </style>
 </head>
 <body>
-    <canvas id="bgCanvas"></canvas>
+    <div id="staticBg"></div>
 
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -70,41 +82,15 @@
     </div>
 
     <script>
-        const bgCanvas = document.getElementById('bgCanvas');
-        const bgCtx = bgCanvas.getContext('2d');
+        // --- STATIC BACKGROUND GENERATOR ---
+        const bgContainer = document.getElementById('staticBg');
+        // "ONEKEY" spelled out cleanly in Morse code splits
+        const morsePattern = "--- -. . -.- . -.--   "; 
+        
+        // Fills the entire background element safely based on viewport sizing
+        bgContainer.textContent = morsePattern.repeat(1500);
 
-        function resizeBg() {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-        }
-        resizeBg();
-        window.addEventListener('resize', resizeBg);
-
-        const matrixChars = [".", "-", "•", "−", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-        const fontSize = 16;
-        const columns = Math.floor(bgCanvas.width / fontSize);
-        const drops = Array(columns).fill(1);
-
-        function drawMatrix() {
-            // FIXED: Draws a semi-transparent white box over previous text positions to create trailing paths
-            bgCtx.fillStyle = "rgba(255, 255, 255, 0.14)";
-            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-            // FIXED: Dark charcoal gray text with clear opacity so it stands out sharply against the white background
-            bgCtx.fillStyle = "rgba(0, 0, 0, 0.12)"; 
-            bgCtx.font = fontSize + "px monospace";
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                bgCtx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > bgCanvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
+        // --- PRIMARY GAME INTERACTION ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -203,8 +189,6 @@
         }
 
         function loop() {
-            drawMatrix();
-
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
