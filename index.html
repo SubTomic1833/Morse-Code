@@ -5,73 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morse Code Challenge</title>
     <style>
-        body {
-            margin: 0;
-            background-color: #ffffff;
-            /* Creates a clean, repeating static watermark pattern of "ONEKEY" in Morse code */
-            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 0);
-            background-size: 24px 24px;
-            position: relative;
-            color: #000000;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+    body {
+        margin: 0;
+        background-color: #ffffff;
 
-        /* Static background grid layer for the Morse text */
-        #staticBg {
-            position: absolute;
-            top: -5%;
-            left: -5%;
-            width: 110vw;
-            height: 110vh;
-            z-index: 1;
-            opacity: 0.04; /* Keeps it super subtle so it doesn't distract from the game */
-            font-size: 18px;
-            font-weight: bold;
-            line-height: 2;
-            letter-spacing: 4px;
-            word-wrap: break-word;
-            user-select: none;
-            pointer-events: none;
-            overflow: hidden;
-        }
+        /* Static repeating ONEKEY Morse code background */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140' viewBox='0 0 260 140'%3E%3Cg transform='rotate(-18 130 70)'%3E%3Ctext x='10' y='70' font-family='Courier New, monospace' font-size='20' font-weight='bold' fill='rgba(0,0,0,0.2)' letter-spacing='2'%3E---%20-.%20.%20-.-%20.%20-.--%3C/text%3E%3C/g%3E%3C/svg%3E");
 
-        #gameContainer {
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-            border: 3px solid #000000;
-            border-radius: 8px;
-            z-index: 2;
-            background: #ffffff;
-        }
-        canvas {
-            display: block;
-        }
-        .instructions {
-            margin-top: 15px;
-            text-align: center;
-            max-width: 600px;
-            font-size: 14px;
-            line-height: 1.5;
-            color: #4a4a4a;
-            z-index: 2;
-        }
-        span.key {
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-    </style>
+        background-repeat: repeat;
+        background-size: 260px 140px;
+
+        position: relative;
+        color: #000000;
+        font-family: 'Courier New', Courier, monospace;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #gameContainer {
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        border: 3px solid #000000;
+        border-radius: 8px;
+        z-index: 2;
+        background: #ffffff;
+    }
+
+    canvas {
+        display: block;
+    }
+
+    .instructions {
+        margin-top: 15px;
+        text-align: center;
+        max-width: 600px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #4a4a4a;
+        z-index: 2;
+    }
+
+    span.key {
+        background: #1a1a1a;
+        color: #ffffff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
-    <div id="staticBg"></div>
 
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -82,14 +71,6 @@
     </div>
 
     <script>
-        // --- STATIC BACKGROUND GENERATOR ---
-        const bgContainer = document.getElementById('staticBg');
-        // "ONEKEY" spelled out cleanly in Morse code splits
-        const morsePattern = "--- -. . -.- . -.--   "; 
-        
-        // Fills the entire background element safely based on viewport sizing
-        bgContainer.textContent = morsePattern.repeat(1500);
-
         // --- PRIMARY GAME INTERACTION ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
