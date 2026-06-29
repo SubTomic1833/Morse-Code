@@ -127,7 +127,27 @@
 
         function handleKeyDown(e){
             if (e.repeat) return;
-            if (e.code === 'Space' || e.type === 'touchstart' || e.type === 'mousedown')
+            if (e.code === 'Space' || e.type === 'touchstart' || e.type === 'mousedown'){
+                if(e.code === 'Space') e.preventDefault();
+                if (gameOver){
+                    resetGame();
+                    return;
+                }
+                isPressed = true;
+                keyDownTime = Date.now();
+            }
+        }
+        function handleKeyUp(e){
+            if (e.code === 'Space' || e.type === 'touchend' || e.type === 'mouseup'){
+                if (!isPressed) return;
+                isPressed = false;
+                keyUpTime = Date.now();
+
+                let duration = keyUpTime = keyDownTime;
+                if (duration > 30){
+                    currentSignal += (duration >= DASH_THRESHOLD) ? "-" : ".";
+                }
+            }
         }
     </script>
 </body>
