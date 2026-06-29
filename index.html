@@ -8,8 +8,6 @@
     body {
         margin: 0;
         background-color: #ffffff;
-
-        /* Static repeating ONEKEY Morse code background */
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140' viewBox='0 0 260 140'%3E%3Cg transform='rotate(-18 130 70)'%3E%3Ctext x='10' y='70' font-family='Courier New, monospace' font-size='20' font-weight='bold' fill='rgba(0,0,0,0.27)' letter-spacing='2'%3E---%20-.%20.%20-.-%20.%20-.--%3C/text%3E%3C/g%3E%3C/svg%3E");
 
         background-repeat: repeat;
@@ -71,7 +69,6 @@
     </div>
 
     <script>
-        // --- PRIMARY GAME INTERACTION ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
